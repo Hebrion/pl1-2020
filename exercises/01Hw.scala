@@ -36,36 +36,42 @@ via the GitHub repo for your team and for this exercise.
 
 object Hw01 {
 
-/**
-Consider the following language of propositional logic formulae:
-*/
+
+//Impl geht leider nicht. "may be exhaustive"
+
+
 sealed abstract class Exp
 case class True() extends Exp  // constant true
 case class False() extends Exp // constant false
 case class And(lhs: Exp, rhs: Exp) extends Exp
 case class Or(lhs: Exp, rhs: Exp) extends Exp
 case class Not(e: Exp) extends Exp
-
-/**
-Tasks:
-
-       1) Implement the missing parts of the interpreter for these formulae
-          (the eval function).
-          Test the correctness by evaluating the example proposition given
-          below and add at least two more examples and test against these.
-
-       2) Add implication as a new kind of expression "Impl" and extend
-          the interpreter accordingly. Add at least two examples and test.
-*/
+case class Impl(lhs:Exp, rhs: Exp) extends Exp
 
 def eval(e: Exp) : Boolean = e match {
-  case True()    => sys.error("not yet implemented")
-  case False()   => sys.error("not yet implemented")
-  case And(l, r) => sys.error("not yet implemented")
-  case Or(l, r)  => sys.error("not yet implemented")
-  case Not(e)    => sys.error("not yet implemented")
+  case True() => true
+  case False() => false
+  case And(lhs, rhs) => eval(lhs) && eval (rhs)
+  case Or(lhs, rhs) => eval(lhs) || eval (rhs)
+  case Not(e)  => !(eval(e))
+  case Impl(lhs, rhs) => if ((eval(lhs) == true) && (eval(rhs) == false)){
+    false
+  }else{
+    true
+  }
 }
 
-val exampleProposition = And(Not(True()), False()) // should evaluate to false
+val exampleProposition1 = And(Not(True()), False()) // should evaluate to false
+val exampleProposition2 = Or(True(), False())
+val exampleProposition3 = And(Not(True()), Or(True(), False()))
+
+val exampleProposition4 = Impl(True(), And(Not(True()), Or(True(), False())))
+val exampleProposition5 = Impl(False(), True())
+
+eval(exampleProposition1)
+eval(exampleProposition2)
+eval(exampleProposition3)
+
+
 
 }
